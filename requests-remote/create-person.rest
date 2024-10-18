@@ -1,0 +1,7 @@
+POST https://fso-phonebook-backend-m8o3.onrender.com/api/persons HTTP/1.1
+content-type: application/json
+
+{
+  "name": "Kevin Bacon",
+  "number": "555-555-5555"
+}
