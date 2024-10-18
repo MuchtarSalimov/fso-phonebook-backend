@@ -1,6 +1,9 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json());
+app.use(express.urlencoded());
+
 let persons = [
   { 
     "id": "1",
@@ -39,6 +42,27 @@ app.get('/api/persons/:id', (request, response) => {
     return response.status(404).send({ error: 'id not found' })
   }
   return response.json(person)
+})
+
+app.post('/api/persons', (request, response) => {
+  if (!request.body.name) {
+    return response.status(400).send({ error: 'name missing' })
+  }
+  if (!request.body.number) {
+    return response.status(400).send({ error: 'number missing' })
+  }
+  if(persons.find(person=>person.name === request.body.name)) {
+    return response.status(409).send({ error: 'name must be unique' })
+  }
+
+  const newData = {
+    id: (Math.random()*100000).toFixed(0),
+    name: request.body.name,
+    number: request.body.number
+  }
+  persons.push(newData)
+
+  return response.status(201).send(newData)
 })
 
 app.delete('/api/persons/:id', (request, response) => {
