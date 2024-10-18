@@ -33,6 +33,14 @@ app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
 
+app.get('/api/persons/:id', (request, response) => {
+  const person = persons.find(entry=> entry.id === request.params.id)
+  if ( !person ) {
+    return response.status(404).send({ error: 'id not found' })
+  }
+  return response.json(person)
+})
+
 app.get('/info', (request, response) => {
   const date = new Date(Date.now())
   response.send(`Phonebook has info for ${ persons.length } people <br/> ${date.toString()}`)
