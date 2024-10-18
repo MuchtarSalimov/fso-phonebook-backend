@@ -5,6 +5,7 @@ const cors = require('cors')
 const app = express()
 
 app.use(cors())
+app.use(express.static('dist'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -45,8 +46,7 @@ let persons = [
 ]
 
 app.get('/', (request, response) => {
-  const date = new Date(Date.now())
-  response.send(`Phonebook has info for ${ persons.length } people <br/> ${date.toString()}`)
+  response.redirect('/index.html')
 })
 
 app.get('/api/persons', (request, response) => {
