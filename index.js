@@ -6,8 +6,8 @@ const personService = require('./personService')
 const app = express()
 
 app.use(cors())
-app.use(express.static('dist'))
 app.use(express.json())
+app.use(express.static('dist'))
 app.use(express.urlencoded({ extended: true }))
 
 morgan.token('body', (req, res) => { return req.method === 'POST'? JSON.stringify(req.body) : null})
@@ -84,13 +84,17 @@ app.post('/api/persons', async (request, response) => {
     then((result)=>response.status(201).send(result))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
-  const person = persons.find(entry=> entry.id === request.params.id)
-  if ( !person ) {
-    return response.status(204).send({ error: 'id not found' })
-  }
-  persons = persons.filter(entry=>entry.id !== request.params.id)
-  return response.status(200).json(person)
+app.delete('/api/persons/:id', async (request, response) => {
+  console.log(request.params)
+  personService.deletePersonById(request.params.id)
+  .then(result => {
+    if ( result.deletedCount === 0 ) {
+      return response.status(204).end()
+    } else {
+      return response.status(204).end()
+    }
+  })
+  .catch(err=> response.status(500).end())
 })
 
 app.get('/info', (request, response) => {

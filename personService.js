@@ -12,11 +12,11 @@ const personSchema = new mongoose.Schema({
   id: String,
   name: String,
   number: String,
-}, { collection: 'persons'})
+}, { collection: 'persons' })
 
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject.id.toString(),
+    returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
     delete returnedObject.__v
   }
@@ -30,7 +30,6 @@ const getPersonById = (givenId) => Person.findOne({ id: givenId })
 
 const addPerson = (newPerson) => {
   const person = new Person({
-    id: (Math.random()*100000).toFixed(0),
     name: newPerson.name,
     number: newPerson.number
   })
@@ -38,8 +37,13 @@ const addPerson = (newPerson) => {
   return person.save()
 }
 
+const deletePersonById = (givenId) => {
+ return Person.deleteOne({ _id: givenId })
+}
+
 module.exports = {
   getAllPersons,
   getPersonById,
   addPerson,
+  deletePersonById,
 }
