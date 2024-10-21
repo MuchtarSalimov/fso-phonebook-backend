@@ -30,7 +30,6 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model('Person', personSchema)
 
-
 if ( commandLineArgs.length < 4 ) {
   // print
   console.log('phonebook')

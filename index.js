@@ -1,6 +1,7 @@
 const express = require('express')
 var morgan = require('morgan')
 const cors = require('cors')
+const personService = require('./personService')
 
 const app = express()
 
@@ -50,36 +51,37 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  personService.getAllPersons().then(persons => {
+    response.json(persons)
+  })
 })
 
-app.get('/api/persons/:id', (request, response) => {
-  const person = persons.find(entry=> entry.id === request.params.id)
-  if ( !person ) {
-    return response.status(404).send({ error: 'id not found' })
-  }
-  return response.json(person)
+app.get('/api/persons/:id', async (request, response) => {
+  const person = await personService.getPersonById(request.params.id)
+    if (!person) {
+      return response.status(404).send({ error: 'id not found' })
+    } else {
+      return response.json(person)
+    }
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', async (request, response) => {
   if (!request.body.name) {
     return response.status(400).send({ error: 'name missing' })
   }
   if (!request.body.number) {
     return response.status(400).send({ error: 'number missing' })
   }
-  if(persons.find(person=>person.name === request.body.name)) {
-    return response.status(409).send({ error: 'name must be unique' })
-  }
+  // if(persons.find(person=>person.name === request.body.name)) {
+  //   return response.status(409).send({ error: 'name must be unique' })
+  // }
 
-  const newData = {
-    id: (Math.random()*100000).toFixed(0),
-    name: request.body.name,
-    number: request.body.number
-  }
-  persons.push(newData)
-
-  return response.status(201).send(newData)
+  personService
+    .addPerson({
+      name: request.body.name,
+      number: request.body.number
+    }).
+    then((result)=>response.status(201).send(result))
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -93,7 +95,9 @@ app.delete('/api/persons/:id', (request, response) => {
 
 app.get('/info', (request, response) => {
   const date = new Date(Date.now())
-  response.send(`Phonebook has info for ${ persons.length } people <br/> ${date.toString()}`)
+  Person.find({}).then(persons => {
+    response.send(`Phonebook has info for ${ persons.length } people <br/> ${date.toString()}`)
+  })
 })
 
 const PORT = process.env.PORT || 3001
