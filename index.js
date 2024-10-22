@@ -1,6 +1,7 @@
 const express = require('express')
 var morgan = require('morgan')
 const cors = require('cors')
+const { errorHandler, genericErrorHandler } = require('./middleware/error-middleware')
 const personService = require('./personService')
 
 const app = express()
@@ -50,22 +51,29 @@ app.get('/', (request, response) => {
   response.redirect('/index.html')
 })
 
-app.get('/api/persons', (request, response) => {
-  personService.getAllPersons().then(persons => {
-    response.json(persons)
-  })
+app.get('/api/persons', (request, response, next) => {
+  personService
+    .getAllPersons()
+    .then(persons => {
+      response.json(persons)
+    })
+    .catch(error => next(error))
 })
 
-app.get('/api/persons/:id', async (request, response) => {
-  const person = await personService.getPersonById(request.params.id)
-    if (!person) {
-      return response.status(404).send({ error: 'id not found' })
-    } else {
-      return response.json(person)
-    }
+app.get('/api/persons/:id', async (request, response, next) => {
+  personService
+    .getPersonById(request.params.id)
+    .then(person=> {
+      if (!person) {
+        return response.status(404).send({ error: 'id not found'})
+      } else {
+        return response.json(person)
+      }    
+    })
+    .catch(error => next(error))
 })
 
-app.post('/api/persons', async (request, response) => {
+app.post('/api/persons', async (request, response, next) => {
   if (!request.body.name) {
     return response.status(400).send({ error: 'name missing' })
   }
@@ -80,29 +88,32 @@ app.post('/api/persons', async (request, response) => {
     .addPerson({
       name: request.body.name,
       number: request.body.number
-    }).
-    then((result)=>response.status(201).send(result))
+    })
+    .then((result)=>response.status(201).send(result))
+    .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', async (request, response) => {
-  console.log(request.params)
+app.delete('/api/persons/:id', async (request, response, next) => {
   personService.deletePersonById(request.params.id)
   .then(result => {
-    if ( result.deletedCount === 0 ) {
-      return response.status(204).end()
-    } else {
-      return response.status(204).end()
-    }
+    return response.status(204).end()
   })
-  .catch(err=> response.status(500).end())
+  .catch(error => next(error))
 })
 
-app.get('/info', (request, response) => {
+app.get('/info', (request, response, next) => {
   const date = new Date(Date.now())
-  Person.find({}).then(persons => {
-    response.send(`Phonebook has info for ${ persons.length } people <br/> ${date.toString()}`)
-  })
+  Person
+    .find({})
+    .then(persons => {
+      response.send(`Phonebook has info for ${ persons.length } people <br/> ${date.toString()}`)
+    })
+    .catch(error => next(error))
 })
+
+// error handling middleware. goes last
+app.use(errorHandler)
+app.use(genericErrorHandler)
 
 const PORT = process.env.PORT || 3001
 
