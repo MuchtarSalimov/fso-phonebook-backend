@@ -26,15 +26,10 @@ const Person = mongoose.model('Person', personSchema)
 
 const getAllPersons = () => Person.find({})
 
-const getPersonById = (givenId) => Person.findOne({ id: givenId })
+const getPersonById = (givenId) => Person.findOne({ _id: givenId })
 
 const addPerson = (newPerson) => {
-  const person = new Person({
-    name: newPerson.name,
-    number: newPerson.number
-  })
-
-  return person.save()
+  return Person.findOneAndUpdate({ name: newPerson.name }, { number: newPerson.number }, { upsert: true, new: true })
 }
 
 const deletePersonById = (givenId) => {
