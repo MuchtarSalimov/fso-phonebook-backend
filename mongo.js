@@ -26,7 +26,7 @@ const personSchema = new mongoose.Schema({
   id: String,
   name: String,
   number: String,
-}, { collection: 'persons'})
+}, { collection: 'persons' })
 
 const Person = mongoose.model('Person', personSchema)
 
@@ -48,7 +48,7 @@ if ( commandLineArgs.length < 4 ) {
     number: commandLineArgs[4]
   })
 
-  person.save().then(result => {
+  person.save().then(() => {
     console.log(`added ${commandLineArgs[3]} number ${commandLineArgs[4]} to phonebook`)
     mongoose.connection.close()
   })

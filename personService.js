@@ -10,7 +10,7 @@ mongoose.connect(mongoUrl)
 
 const numberValidator = (number) => {
   // phone number must have 2-3 numbers, then a hyphen, then more numbers
-  return number.match(/^\d{2,3}\-\d*$/)
+  return number.match(/^\d{2,3}-\d*$/)
 }
 
 const personSchema = new mongoose.Schema({
@@ -50,7 +50,7 @@ const addPerson = (newPerson) => {
 }
 
 const deletePersonById = (givenId) => {
- return Person.deleteOne({ _id: givenId })
+  return Person.deleteOne({ _id: givenId })
 }
 
 module.exports = {

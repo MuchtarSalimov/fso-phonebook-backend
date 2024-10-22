@@ -11,7 +11,7 @@ app.use(express.json())
 app.use(express.static('dist'))
 app.use(express.urlencoded({ extended: true }))
 
-morgan.token('body', (req, res) => { return req.method === 'POST'? JSON.stringify(req.body) : null})
+morgan.token('body', (req) => { return req.method === 'POST'? JSON.stringify(req.body) : null})
 
 app.use(morgan(function (tokens, req, res) {
   return [
@@ -23,29 +23,6 @@ app.use(morgan(function (tokens, req, res) {
     tokens.body(req, res),
   ].join(' ')
 }))
-
-let persons = [
-  { 
-    "id": "1",
-    "name": "Arto Hellas", 
-    "number": "040-123456"
-  },
-  { 
-    "id": "2",
-    "name": "Ada Lovelace", 
-    "number": "39-44-5323523"
-  },
-  { 
-    "id": "3",
-    "name": "Dan Abramov", 
-    "number": "12-43-234345"
-  },
-  { 
-    "id": "4",
-    "name": "Mary Poppendieck", 
-    "number": "39-23-6423122"
-  }
-]
 
 app.get('/', (request, response) => {
   response.redirect('/index.html')
@@ -63,12 +40,12 @@ app.get('/api/persons', (request, response, next) => {
 app.get('/api/persons/:id', async (request, response, next) => {
   personService
     .getPersonById(request.params.id)
-    .then(person=> {
+    .then(person => {
       if (!person) {
-        return response.status(404).send({ error: 'id not found'})
+        return response.status(404).send({ error: 'id not found' })
       } else {
         return response.json(person)
-      }    
+      }
     })
     .catch(error => next(error))
 })
@@ -89,21 +66,21 @@ app.post('/api/persons', async (request, response, next) => {
       name: request.body.name,
       number: request.body.number
     })
-    .then((result)=>response.status(201).send(result))
+    .then(result => response.status(201).send(result))
     .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', async (request, response, next) => {
   personService.deletePersonById(request.params.id)
-  .then(result => {
-    return response.status(204).end()
-  })
-  .catch(error => next(error))
+    .then(() => {
+      return response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 app.get('/info', (request, response, next) => {
   const date = new Date(Date.now())
-  Person
+  personService
     .find({})
     .then(persons => {
       response.send(`Phonebook has info for ${ persons.length } people <br/> ${date.toString()}`)

@@ -9,7 +9,7 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name ==='CastError') {
     console.error(error.message)
-    return response.status(400).send({ error: 'malformatted id'})
+    return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
   }
@@ -17,9 +17,9 @@ const errorHandler = (error, request, response, next) => {
   next(error)
 }
 
-const genericErrorHandler = (error, request, response, next) => {
+const genericErrorHandler = (error, request, response) => {
   console.error(error.message)
-  const status = error.status || 500;
+  const status = error.status || 500
   const message = status === 500 ? 'Server Error' : error.message
 
   return response.status(error.status).send({
