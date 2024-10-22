@@ -10,8 +10,16 @@ mongoose.connect(mongoUrl)
 
 const personSchema = new mongoose.Schema({
   id: String,
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    minLength: 3,
+    required: true,
+  },
+  number: {
+    type: String,
+    minLength: 1,
+    required: true,
+  },
 }, { collection: 'persons' })
 
 personSchema.set('toJSON', {
@@ -29,7 +37,7 @@ const getAllPersons = () => Person.find({})
 const getPersonById = (givenId) => Person.findOne({ _id: givenId })
 
 const addPerson = (newPerson) => {
-  return Person.findOneAndUpdate({ name: newPerson.name }, { number: newPerson.number }, { upsert: true, new: true })
+  return Person.findOneAndUpdate({ name: newPerson.name }, { name: newPerson.name, number: newPerson.number }, { upsert: true, new: true, runValidators: true, context: 'query' })
 }
 
 const deletePersonById = (givenId) => {
