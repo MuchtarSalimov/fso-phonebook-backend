@@ -13,7 +13,7 @@ content-type: application/json
 
 {
   "name": "Ada Lovelace",
-  "number": "39-44-5323523"
+  "number": "39-445323523"
 }
 
 ###
@@ -23,7 +23,7 @@ content-type: application/json
 
 {
   "name": "Dan Abramov",
-  "number": "12-43-234345"
+  "number": "12-43234345"
 }
 
 ###
@@ -33,7 +33,7 @@ content-type: application/json
 
 {
   "name": "Mary Poppendieck",
-  "number": "39-23-6423122"
+  "number": "39-236423122"
 }
 
 ###
@@ -43,5 +43,5 @@ content-type: application/json
 
 {
   "name": "Jhonny Bobby",
-  "number": "234-21-24553"
+  "number": "234-2124553"
 }

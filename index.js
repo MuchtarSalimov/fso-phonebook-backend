@@ -50,6 +50,23 @@ app.get('/api/persons/:id', async (request, response, next) => {
     .catch(error => next(error))
 })
 
+app.put('/api/persons/:id', async (request, response, next) => {
+  if (!request.body.name) {
+    return response.status(400).send({ error: 'name missing' })
+  }
+  if (!request.body.number) {
+    return response.status(400).send({ error: 'number missing' })
+  }
+
+  personService
+    .addOrReplacePerson({
+      name: request.body.name,
+      number: request.body.number
+    })
+    .then(result => response.status(200).send(result))
+    .catch(error => next(error))
+})
+
 app.post('/api/persons', async (request, response, next) => {
   if (!request.body.name) {
     return response.status(400).send({ error: 'name missing' })
@@ -62,7 +79,7 @@ app.post('/api/persons', async (request, response, next) => {
   // }
 
   personService
-    .addPerson({
+    .addOrReplacePerson({
       name: request.body.name,
       number: request.body.number
     })
@@ -81,9 +98,9 @@ app.delete('/api/persons/:id', async (request, response, next) => {
 app.get('/info', (request, response, next) => {
   const date = new Date(Date.now())
   personService
-    .find({})
+    .getAllPersons()
     .then(persons => {
-      response.send(`Phonebook has info for ${ persons.length } people <br/> ${date.toString()}`)
+      response.status(200).send(`Phonebook has info for ${ persons.length } people <br/> ${date.toString()}`)
     })
     .catch(error => next(error))
 })

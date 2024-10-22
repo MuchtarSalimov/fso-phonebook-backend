@@ -45,7 +45,7 @@ const getAllPersons = () => Person.find({})
 
 const getPersonById = (givenId) => Person.findOne({ _id: givenId })
 
-const addPerson = (newPerson) => {
+const addOrReplacePerson = (newPerson) => {
   return Person.findOneAndUpdate({ name: newPerson.name }, { name: newPerson.name, number: newPerson.number }, { upsert: true, new: true, runValidators: true, context: 'query' })
 }
 
@@ -56,6 +56,6 @@ const deletePersonById = (givenId) => {
 module.exports = {
   getAllPersons,
   getPersonById,
-  addPerson,
+  addOrReplacePerson,
   deletePersonById,
 }
