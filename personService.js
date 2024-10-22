@@ -8,6 +8,11 @@ mongoose.set('strictQuery', false)
 
 mongoose.connect(mongoUrl)
 
+const numberValidator = (number) => {
+  // phone number must have 2-3 numbers, then a hyphen, then more numbers
+  return number.match(/^\d{2,3}\-\d*$/)
+}
+
 const personSchema = new mongoose.Schema({
   id: String,
   name: {
@@ -17,8 +22,12 @@ const personSchema = new mongoose.Schema({
   },
   number: {
     type: String,
-    minLength: 1,
+    minLength: 8,
     required: true,
+    validate: {
+      validator: numberValidator,
+      message: props => `${ props.value } is not a valid phone number format`
+    },
   },
 }, { collection: 'persons' })
 
