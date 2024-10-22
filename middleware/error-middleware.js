@@ -17,7 +17,7 @@ const errorHandler = (error, request, response, next) => {
   next(error)
 }
 
-const genericErrorHandler = (error, request, response, next) => {
+const genericErrorHandler = (error, request, response) => {
   console.error(error.message)
   const status = error.status || 500
   const message = status === 500 ? 'Server Error' : error.message
